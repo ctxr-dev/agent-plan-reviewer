@@ -1,0 +1,46 @@
+{
+  "name": "@ctxr/agent-plan-reviewer",
+  "version": "1.0.0",
+  "description": "Read-only adversarial plan reviewer that critiques a plan or design BEFORE it is confirmed. Use it to find gaps, divergences from intent, blind spots, edge cases, infeasibilities, and missed files or steps, all verified against the actual code. Scoped tools (no MCP connectors) so it stays immune to a bad connector schema killing subagent init.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctxr-dev/agent-plan-reviewer.git"
+  },
+  "homepage": "https://github.com/ctxr-dev/agent-plan-reviewer#readme",
+  "bugs": {
+    "url": "https://github.com/ctxr-dev/agent-plan-reviewer/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "ctxr-agent-plan-reviewer.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "ctxr": {
+    "type": "agent",
+    "target": "file"
+  },
+  "keywords": [
+    "agent-skills",
+    "agents-md",
+    "codex",
+    "claude-code",
+    "ctxr",
+    "agent",
+    "ai"
+  ],
+  "scripts": {
+    "validate": "npx @ctxr/kit validate",
+    "lint": "markdownlint-cli2 '**/*.md' '#node_modules'",
+    "lint:fix": "markdownlint-cli2 --fix '**/*.md' '#node_modules'",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "husky": "^9.1.0",
+    "markdownlint-cli2": "^0.14.0"
+  }
+}
