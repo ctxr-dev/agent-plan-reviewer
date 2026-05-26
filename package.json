@@ -1,6 +1,6 @@
 {
   "name": "@ctxr/agent-plan-reviewer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Read-only adversarial reviewer of a plan or design before it is confirmed. Verifies every claim against the actual source and hunts gaps, blind spots, edge cases, infeasibilities, intent divergence, and missed steps. Read-only; uses whatever capabilities the environment provides and never halts when one is missing or unhealthy.",
   "type": "module",
   "license": "MIT",
