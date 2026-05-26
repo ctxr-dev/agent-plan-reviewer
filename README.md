@@ -1,55 +1,28 @@
-# Agent Plan Reviewer
+# agent-plan-reviewer
 
-A read-only adversarial plan-review subagent for the focused-subagent discipline: hand it a plan plus context, get back a tagged critique verified against the actual code. It is scoped to Read/Grep/Glob/Bash/WebFetch/WebSearch and carries no MCP connector tools, so it stays immune to a bad connector schema that would otherwise kill subagent init.
+A read-only adversarial plan-review subagent for Claude Code, Codex, and OpenCode. Hand it a plan; it tries to break the plan before you commit to it.
 
-## Installation
+## What it does
+
+Given a plan or design plus context, it distrusts every claim and verifies it against the real code (does the file, symbol, or API actually exist and behave as assumed?), then hunts for gaps, blind spots, edge cases, infeasibilities, intent divergence, and missed steps. It returns findings tagged `[BLOCKER]` / `[SHOULD-FIX]` / `[NIT]`, each with a concrete scenario, `file:line` evidence, and a suggested fix. It never edits anything; it can web-check an external API or library when unsure.
+
+It carries only Read, Grep, Glob, Bash, WebFetch, and WebSearch (no MCP/connector tools). That least-privilege set is deliberate: an agent that advertises no connector schema cannot be taken down by a malformed one, so it stays spawnable when broader agents do not.
+
+## When to use it
+
+At a planning gate, before confirming a non-trivial plan (on Claude Code, before `ExitPlanMode`). Run two or three in parallel with disjoint lenses (correctness, edge cases, feasibility) and fold the findings back into the plan.
+
+## Install
 
 ```bash
 npx @ctxr/kit install @ctxr/agent-plan-reviewer
 ```
 
-Installs as a single `.md` file into `.agents/agents/<name>.md`.
-
-> Claude Code, Codex CLI, and OpenCode users are auto-served via discovery-mirror symlinks created by `@ctxr/kit` at install time, you do not need to mirror anything by hand.
-
-## Usage
-
-Invoke it before confirming a non-trivial plan (on Claude Code, before `ExitPlanMode`):
-
-```text
-Agent(subagent_type: "ctxr-agent-plan-reviewer",
-      prompt: "<the plan> + <context>, review adversarially; verify claims against the code")
-```
-
-It returns findings tagged `[BLOCKER]` / `[SHOULD-FIX]` / `[NIT]` with `file:line` evidence, and never edits anything. Run two or three in parallel with disjoint lenses (gaps, edge cases, infeasibilities) for broad coverage.
+`@ctxr/kit` installs the bundle and mirrors it into the host's agent directory; the agent then appears as `agent-plan-reviewer`.
 
 ## Releasing
 
-Releases are PR-gated. Version bumps land on `main` through a review gate like any other change; only the tag push is automated.
-
-### One-time setup
-
-- Repository secret `NPM_TOKEN` set to an npm access token with publish rights on this package's scope (`npm token create`, then **Settings → Secrets → Actions**).
-- (Optional, recommended) GitHub-managed CodeQL default setup: **Security → Code security** → enable default setup for `javascript-typescript` and `actions`.
-- In this repository, enable **Allow GitHub Actions to create and approve pull requests** under **Settings → Actions → General → Workflow permissions**. If the option is greyed out, an organization-level Actions policy is restricting it, an org admin must unlock the setting first. Without this, `release.yml` fails with `GitHub Actions is not permitted to create or approve pull requests`.
-
-### Cutting a release
-
-1. **Actions → Release → Run workflow**. Branch: `main` (the workflow refuses any other ref). Version bump: `patch` / `minor` / `major`. Click **Run workflow**.
-2. The workflow bumps `package.json` on a `release/v<version>` branch and opens a PR.
-3. Review + merge the PR.
-4. `tag-on-main.yml` fires on the merge, detects the version change, creates the annotated `v<version>` tag, and pushes it.
-5. On the newly created `v<version>` tag, **Actions → Publish to npm → Run workflow**. The workflow re-runs the package's `lint`, `validate`, and `test` scripts (each script is run only if declared in `package.json`), verifies tag/version agreement, and publishes the package to npm.
-
-> **Why a manual dispatch for step 5?** GitHub's built-in `GITHUB_TOKEN` cannot trigger further workflows, so the `v<version>` tag created by `tag-on-main.yml` does NOT automatically fire `publish.yml`. A one-click dispatch on the tag works around it. To fully automate, swap the tag-push credential in `tag-on-main.yml` for a GitHub App token or fine-grained PAT (stored as a repo secret), then the `push: tags` trigger on `publish.yml` fires and step 5 happens by itself.
-
-From **Run workflow** on Release to **published on npm** is one dispatch + one PR merge + one dispatch (or one dispatch + one PR merge, once a PAT/App-token is wired in).
-
-### Troubleshooting
-
-- **Release fails with "dispatched from non-main ref"**: select `main` in the Actions UI and re-dispatch.
-- **`tag-on-main` fails with "Tag vX.Y.Z exists but points at …"**: a stale tag from a prior failed run. Delete it (`git push origin --delete vX.Y.Z`) and re-trigger.
-- **`publish.yml` fails on "Verify version matches tag"**: tag and `package.json` disagree. Investigate the merge commit; should not happen under the PR-based flow.
+Releases are PR-gated and the publish step is a manual dispatch; the CI workflows (`ci`, `release`, `tag-on-main`, `publish`) carry the details.
 
 ## License
 
