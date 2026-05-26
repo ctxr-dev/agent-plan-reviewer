@@ -1,7 +1,7 @@
 {
   "name": "@ctxr/agent-plan-reviewer",
   "version": "1.0.0",
-  "description": "Read-only adversarial plan reviewer that critiques a plan or design BEFORE it is confirmed. Use it to find gaps, divergences from intent, blind spots, edge cases, infeasibilities, and missed files or steps, all verified against the actual code. Scoped tools (no MCP connectors) so it stays immune to a bad connector schema killing subagent init.",
+  "description": "Read-only adversarial reviewer of a plan or design before it is confirmed. Verifies every claim against the actual source and hunts gaps, blind spots, edge cases, infeasibilities, intent divergence, and missed steps. Read-only; uses whatever capabilities the environment provides and never halts when one is missing or unhealthy.",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -16,13 +16,14 @@
     "node": ">=18.0.0"
   },
   "files": [
-    "ctxr-agent-plan-reviewer.md",
+    "package.json",
+    "AGENT.md",
     "README.md",
     "LICENSE"
   ],
   "ctxr": {
     "type": "agent",
-    "target": "file"
+    "target": "folder"
   },
   "keywords": [
     "agent-skills",
