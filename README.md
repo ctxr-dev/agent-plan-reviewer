@@ -15,7 +15,7 @@ At a planning gate, before confirming a non-trivial plan (on Claude Code, before
 ## Install
 
 ```bash
-npx @ctxr/kit install @ctxr/agent-plan-reviewer
+npx @ctxr/kit@latest install @ctxr/agent-plan-reviewer
 ```
 
 `@ctxr/kit` installs the bundle and mirrors it into the host's agent directory; the agent then appears as `agent-plan-reviewer`.
